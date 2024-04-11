@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ -z "$1" ] || ! [[ "$1" =~ ^[0-9]+$ ]]; then
+    echo "Invalid PORT argument!\nUsage: mytunnel PORT [-v]"
+    exit 1
+fi
+
+LOCAL_PORT=$1
+VERBOSE=""
+shift
+
+while getopts ":v" opt; do
+    case ${opt} in
+        v)
+            VERBOSE="-v"
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG\nUsage: mytunnel PORT [-v]" 1>&2
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND -1))
+
+nc -z localhost $LOCAL_PORT
+if [ $? -ne 0 ] ; then
+    echo "Fail to connect to port localhost:$LOCAL_PORT"
+    exit 1
+fi
+
+echo "Redirecting localhost:$LOCAL_PORT to https://mytunnel.ddns.net"
+ssh $VERBOSE -N -o ServerAliveInterval=20 -R 8000:localhost:$LOCAL_PORT mytunnel.ddns.net

@@ -1,0 +1,13 @@
+mytunnel.ddns.net {
+	root * /usr/share/caddy
+	encode gzip
+
+	reverse_proxy :8000
+
+	handle_errors {
+		rewrite * /{err.status_code}.html
+		file_server
+	}
+
+	file_server
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=NO-IP DDNS auto update
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/update_noip.sh
+
+[Install]
+WantedBy=multi-user.target
